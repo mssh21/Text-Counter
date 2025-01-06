@@ -1,0 +1,56 @@
+<style>
+  body {
+    font-family: Inter, sans-serif;
+    padding: 20px;
+  }
+  button {
+    background-color: #3F6ECC;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #1490E4;
+  }
+  #results {
+    margin-top: 16px;
+  }
+  .result-item {
+    margin: 8px 0;
+    padding: 8px;
+    background-color: #F0F0F0;
+    border-radius: 4px;
+  }
+</style>
+
+<div>
+  <button id="count">テキストをカウント</button>
+  <div id="results"></div>
+</div>
+
+<script>
+document.getElementById('count').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'count-text' } }, '*');
+}
+
+onmessage = (event) => {
+  const msg = event.data.pluginMessage;
+  if (msg.type === 'count-result') {
+    const resultsDiv = document.getElementById('results');
+    let html = `<h3>合計文字数: ${msg.total}</h3>`;
+    
+    msg.details.forEach(item => {
+      html += `
+        <div class="result-item">
+          <div>レイヤー名: ${item.name}</div>
+          <div>文字数: ${item.count}</div>
+        </div>
+      `;
+    });
+    
+    resultsDiv.innerHTML = html;
+  }
+}
+</script>
