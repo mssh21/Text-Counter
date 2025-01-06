@@ -26,10 +26,22 @@ function checkGuidelines(text: string): string[] {
   return violations;
 }
 
-figma.showUI(__html__, { width: 300, height: 400 });
+figma.showUI(__html__, { 
+  width: 300, 
+  height: 400
+});
 
 figma.ui.onmessage = (msg: { type: string }) => {
   if (msg.type === 'count-text') {
+    if (figma.currentPage.selection.length === 0) {
+      figma.ui.postMessage({
+        type: 'count-result',
+        total: 0,
+        details: []
+      });
+      return;
+    }
+
     const selection = figma.currentPage.selection;
     let totalCount = 0;
     let results: { 
