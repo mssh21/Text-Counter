@@ -49,6 +49,14 @@ onmessage = (event) => {
           <div>半角スペース: ${item.halfWidthSpaces}</div>
           <div>全角スペース: ${item.fullWidthSpaces}</div>
           <div>改行: ${item.lineBreaks}</div>
+          ${item.violations.length > 0 ? `
+            <div class="violations" style="color: red;">
+              <strong>警告:</strong>
+              <ul>
+                ${item.violations.map(v => `<li>${v}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
         </div>
       `;
     });
