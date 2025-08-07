@@ -23,11 +23,6 @@ Figmaで選択したテキストレイヤーの文字数をカウントするプ
 2. プラグインメニューから「Text Counter」を選択
 3. 選択したテキストの文字数が表示されます
 
-## インストール方法
-
-1. [Figmaプラグインストア](#)からインストール
-2. Figmaプロジェクトで直接使用開始
-
 ## 開発者向け情報
 
 ### 必要な環境
@@ -48,12 +43,6 @@ npm run watch
 # プロダクション用ビルド
 npm run build
 ```
-
-### 開発環境の準備
-
-1. Visual Studio Codeをインストール: https://code.visualstudio.com/
-2. このディレクトリをVS Codeで開く
-3. TypeScriptのコンパイル: 「Terminal > Run Build Task...」から「npm: watch」を選択
 
 ## ライセンス
 
