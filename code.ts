@@ -33,7 +33,9 @@ figma.showUI(__html__, {
 
 figma.ui.onmessage = (msg: { type: string }) => {
   if (msg.type === 'count-text') {
-    if (figma.currentPage.selection.length === 0) {
+    const selection = figma.currentPage.selection;
+    
+    if (selection.length === 0) {
       figma.ui.postMessage({
         type: 'count-result',
         total: 0,
@@ -42,9 +44,20 @@ figma.ui.onmessage = (msg: { type: string }) => {
       return;
     }
 
-    const selection = figma.currentPage.selection;
+    // テキストノードのみを事前にフィルタリング
+    const textNodes = selection.filter(node => node.type === "TEXT") as TextNode[];
+    
+    if (textNodes.length === 0) {
+      figma.ui.postMessage({
+        type: 'count-result',
+        total: 0,
+        details: []
+      });
+      return;
+    }
+
     let totalCount = 0;
-    let results: { 
+    const results: { 
       name: string, 
       count: number,
       halfWidthSpaces: number,
@@ -53,28 +66,32 @@ figma.ui.onmessage = (msg: { type: string }) => {
       violations: string[]
     }[] = [];
 
-    // 選択したレイヤーをループで処理
-    for (const node of selection) {
-      if (node.type === "TEXT") {
-        const characters = node.characters;
-        const count = characters.length;
-        const halfWidthSpaces = (characters.match(/ /g) || []).length;
-        const fullWidthSpaces = (characters.match(/　/g) || []).length;
-        const lineBreaks = (characters.match(/\n/g) || []).length;
-        
-        // ガイドラインチェックを実行
-        const violations = checkGuidelines(characters);
-        
-        totalCount += count;
-        results.push({
-          name: node.name || "無名のテキスト",
-          count: count,
-          halfWidthSpaces: halfWidthSpaces,
-          fullWidthSpaces: fullWidthSpaces,
-          lineBreaks: lineBreaks,
-          violations: violations
-        });
-      }
+    // テキストノードのみを効率的に処理
+    for (const textNode of textNodes) {
+      const characters = textNode.characters;
+      const count = characters.length;
+      
+      // 正規表現を一度だけ実行して結果を再利用
+      const halfWidthSpaceMatches = characters.match(/ /g);
+      const fullWidthSpaceMatches = characters.match(/　/g);
+      const lineBreakMatches = characters.match(/\n/g);
+      
+      const halfWidthSpaces = halfWidthSpaceMatches ? halfWidthSpaceMatches.length : 0;
+      const fullWidthSpaces = fullWidthSpaceMatches ? fullWidthSpaceMatches.length : 0;
+      const lineBreaks = lineBreakMatches ? lineBreakMatches.length : 0;
+      
+      // ガイドラインチェックを実行
+      const violations = checkGuidelines(characters);
+      
+      totalCount += count;
+      results.push({
+        name: textNode.name || "無名のテキスト",
+        count: count,
+        halfWidthSpaces: halfWidthSpaces,
+        fullWidthSpaces: fullWidthSpaces,
+        lineBreaks: lineBreaks,
+        violations: violations
+      });
     }
 
     // UIに結果を送信
