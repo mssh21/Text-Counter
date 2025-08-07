@@ -19,7 +19,7 @@ build/
 .env.production.local
 
 # Figma
-manifest.json
+# manifest.json
 
 # Logs
 npm-debug.log*

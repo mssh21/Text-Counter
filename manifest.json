@@ -1,6 +1,6 @@
 {
   "name": "Text Counter",
-  "id": "text-counter",
+  "id": "mssh21-text-counter",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
